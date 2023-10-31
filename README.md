@@ -1,2 +1,1 @@
-# note-taker
-Taking dynamic notes
+#note-taker
