@@ -22,13 +22,15 @@ app.get('/api/notes', (req, res) => {
 })
 
 app.post('/api/notes', (req, res) => {
+    console.log('line 25');
     const existingNotes = require('./db/db.json');
-    const newNotes = existingNotes.push(req.body)
-    fs.writeFile('./db/db.json', newNotes, ()=>{
+    existingNotes.push(req.body) //body is baked in; part of http requests; one of the properties of req for POST
+    fs.writeFile('./db/db.json', JSON.stringify(existingNotes, null, 2), err =>{ //fs needs to take in string
         if(err){
             console.log(err)
         } else {
-            console.log('Note saved!')
+            console.log('Note saved!');
+            res.status(201).end(); //similar to json, send, sendFile
         }
     })
 })
