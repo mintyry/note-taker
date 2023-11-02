@@ -10,7 +10,7 @@ const path = require('path');
 const uuid = require('./helpers/uuid');
 
 app.use(express.json());
-app.use(express.urlencoded({ extended : true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // GET * should return the index.html file. **We dont need to do this since it's handled by public, correct?
@@ -29,29 +29,30 @@ app.post('/api/notes', (req, res) => {
     const existingNotes = require('./db/db.json');
     const { title, text } = req.body;
 
-    // // If all the required properties are present
-    // if (title && text) {
-    //   // Variable for the object we will save
-    //   const newNote = {
-    //     title,
-    //     text,
-    //     note_id: uuid(),
-    //   };
+    // If all the required properties are present
+    if (title && text) {
+        // Variable for the object we will save
+        const newNote = {
+            title,
+            text,
+            id: uuid(),
+        };
+        console.log(newNote);
 
-    //   readAndAppend(newNote, './db/db.json');
-    
-    existingNotes.push(req.body) //body is baked in; part of http requests; one of the properties of req for POST
-    fs.writeFile('./db/db.json', JSON.stringify(existingNotes, null, 2), err => { //fs needs to take in string
-        if(err){
-            console.log(err)
-        } else {
-            console.log('Note saved!');
-            res.status(201).end(); //similar to json, send, sendFile; let front end know you dont have to keep waiting
-            //route handlers always have to have response; knew to use end bc connection needs to end for functions to run
-        }
-    })
+        existingNotes.push(newNote) //body is baked in; part of http requests; one of the properties of req for POST
+        console.log(existingNotes);
+        fs.writeFile('./db/db.json', JSON.stringify(existingNotes, null, 2), err => { //fs needs to take in string
+            if(err){
+                console.log(err)
+            } else {
+                console.log('Note saved!');
+                res.status(201).end(); //similar to json, send, sendFile; let front end know you dont have to keep waiting
+                //route handlers always have to have response; knew to use end bc connection needs to end for functions to run
+            }
+        })
+    }
 })
 
 
 
-app.listen (PORT, () => console.log(`app running at http://localhost:${PORT}`))
+app.listen(PORT, () => console.log(`app running at http://localhost:${PORT}`))
