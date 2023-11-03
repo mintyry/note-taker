@@ -1,7 +1,4 @@
-//ask Diarmuid about urlencoded; ask if we need * router handler for homepage, cuz its covered by public
-// require db.json == readFile?
-//I know we gave it the id, which made it clickable, but how does it now work correctly in index.js?
-//stringify err, throw err
+//**stringify err, throw err
 
 //require the node module
 const express = require('express');
@@ -18,12 +15,12 @@ const uuid = require('./helpers/uuid');
 
 //allows the middleware to know we're processing json and parses it into an array/object.
 app.use(express.json());
-// passes in url-encoded content into req.body **?
+// parsing of different types of data from req.body
 app.use(express.urlencoded({ extended: true }));
 // allows us to make paths for files that are in this folder.
 app.use(express.static('public'));
 
-// GET * should return the index.html file. **We dont need to do this since it's handled by public, correct?
+
 
 //route handler for notes made bc index.js specifies this path; leads sends notes.html(page) to client
 app.get('/notes', (req, res) => {
@@ -67,12 +64,16 @@ app.post('/api/notes', (req, res) => {
     }
 })
 
-app.delete(`/api/notes/${id}`, (req, res) => {
-    const existingNotes = require('./db/db.json');
-    existingNotes.filter(req.params.id);
-    console.log(existingNotes);
-})
+// app.delete(`/api/notes/${id}`, (req, res) => {
+//     const existingNotes = require('./db/db.json');
+//     existingNotes.filter(req.params.id);
+//     console.log(existingNotes);
+// })
 
+//method covers get, post, update, delete, etc. using * wildcard is saying for any route that isnt any of the above (which is why it's all the way down here), send them back to the homepage.
+app.all('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'))
+})
 
 
 app.listen(PORT, () => console.log(`app running at http://localhost:${PORT}`))
