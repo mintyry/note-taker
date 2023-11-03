@@ -64,11 +64,11 @@ app.post('/api/notes', (req, res) => {
     }
 })
 
-// app.delete(`/api/notes/${id}`, (req, res) => {
-//     const existingNotes = require('./db/db.json');
-//     existingNotes.filter(req.params.id);
-//     console.log(existingNotes);
-// })
+app.delete('/api/notes/:id', (req, res) => {
+    const existingNotes = require('./db/db.json');
+    existingNotes.filter(req.params.id);
+    console.log(existingNotes);
+})
 
 //method covers get, post, update, delete, etc. using * wildcard is saying for any route that isnt any of the above (which is why it's all the way down here), send them back to the homepage.
 app.all('*', (req, res) => {
