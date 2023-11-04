@@ -76,8 +76,7 @@ app.delete('/api/notes/:id/', (req, res) => {
     //     }
     //     console.log(data);
     // });
-    const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id); // how does url even get the id to begin with?
-    console.log(existingNotes); //how can i console log when errors prevent anything from happening? **
+    const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id.toString()); // how does url even get the id to begin with?
     fs.writeFile('./db/db.json', JSON.stringify(notesAfterDeletion, null, 2), (err) => {
         if (err) {
             console.log(err);
