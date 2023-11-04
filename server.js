@@ -33,6 +33,7 @@ app.get('/notes', (req, res) => {
 //router handler for api/notes specified in index.js; require/read file from db.json and simply send it back out and display to client
 app.get('/api/notes', (req, res) => {
     const existingNotes = require('./db/db.json');
+    // console.log(existingNotes);
     res.json(existingNotes);
 })
 
@@ -54,7 +55,7 @@ app.post('/api/notes', (req, res) => {
         console.log(newNote);
 
         existingNotes.push(newNote) //body is baked in; part of http requests; one of the properties of req for POST
-        console.log(existingNotes);
+        // console.log(existingNotes);
         fs.writeFile('./db/db.json', JSON.stringify(existingNotes, null, 2), err => { //fs needs to take in string
             if (err) {
                 console.log(err)
@@ -66,16 +67,15 @@ app.post('/api/notes', (req, res) => {
         })
     }
 })
-// originally used  ${id}; how come that doesnt work? **
 app.delete('/api/notes/:id/', (req, res) => {
-    // const existingNotes = require('./db/db.json');
-    fs.readFile('./db/db.json', (err, data) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        console.log(data);
-      });
+    const existingNotes = require('./db/db.json');
+    // fs.readFile('./db/db.json', (err, data) => {
+    //     if (err) {
+    //       console.error(err);
+    //       return;
+    //     }
+    //     console.log(data);
+    //   });
     const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id); // how does url even get the id to begin with?
     console.log(existingNotes); //how can i console log when errors prevent anything from happening? **
     fs.writeFile('./db/db.json', JSON.stringify(notesAfterDeletion, null, 2), (err) => {
@@ -86,7 +86,6 @@ app.delete('/api/notes/:id/', (req, res) => {
             res.end();
         }
     });
-   
 })
 
 //method covers get, post, update, delete, etc. using * wildcard is saying for any route that isnt any of the above (which is why it's all the way down here), send them back to the homepage.
