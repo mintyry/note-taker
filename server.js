@@ -67,7 +67,7 @@ app.post('/api/notes', (req, res) => {
     }
 })
 // originally used  ${id}; how come that doesnt work? **
-app.delete('/api/notes/:id/', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
     const existingNotes = require('./db/db.json');
     // const existingNotes = fs.readFile('./db/db.json', (err, data) => {
     //     if (err) {
@@ -76,7 +76,7 @@ app.delete('/api/notes/:id/', (req, res) => {
     //     }
     //     console.log(data);
     // });
-    const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id.toString()); // how does url even get the id to begin with?
+    const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id); // how does url even get the id to begin with?
     fs.writeFile('./db/db.json', JSON.stringify(notesAfterDeletion, null, 2), (err) => {
         if (err) {
             console.log(err);
