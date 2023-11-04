@@ -1,8 +1,9 @@
 //**stringify err, throw err
 
-//require the node module
+//VARIABLES
+//require the express module
 const express = require('express');
-//allows us to use the middleware to handle requests and responses.
+//allows us to use the middleware to handle requests and responses; essentially makes the app.
 const app = express();
 //establish port number; default is 3000 if no other port # is generated.
 const PORT = process.env.PORT || 3000;
@@ -13,6 +14,8 @@ const path = require('path');
 //requires uuid file to give each json object a uuid.
 const uuid = require('./helpers/uuid');
 
+
+//APP.USE
 //allows the middleware to know we're processing json and parses it into an array/object.
 app.use(express.json());
 // parsing of different types of data from req.body
@@ -21,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 
-
+//ROUTE HANDLERS
 //route handler for notes made bc index.js specifies this path; leads sends notes.html(page) to client
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'))
@@ -63,11 +66,27 @@ app.post('/api/notes', (req, res) => {
         })
     }
 })
-
-app.delete('/api/notes/:id', (req, res) => {
-    const existingNotes = require('./db/db.json');
-    existingNotes.filter(req.params.id);
-    console.log(existingNotes);
+// originally used  ${id}; how come that doesnt work? **
+app.delete('/api/notes/:id/', (req, res) => {
+    // const existingNotes = require('./db/db.json');
+    fs.readFile('./db/db.json', (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(data);
+      });
+    const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id); // how does url even get the id to begin with?
+    console.log(existingNotes); //how can i console log when errors prevent anything from happening? **
+    fs.writeFile('./db/db.json', JSON.stringify(notesAfterDeletion, null, 2), (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('note deleted!');
+            res.end();
+        }
+    });
+   
 })
 
 //method covers get, post, update, delete, etc. using * wildcard is saying for any route that isnt any of the above (which is why it's all the way down here), send them back to the homepage.
