@@ -42,7 +42,11 @@ app.get('/api/notes', (req, res) => {
 
 //.post() allows us to create, in this case, creates new notes
 app.post('/api/notes', (req, res) => {
-    const newNote = {title:req.body.title, text:req.body.text, id:uuid()};
+    const newNote = {
+        title:req.body.title, 
+        text:req.body.text, 
+        id:uuid()
+    };
     readAndAppend(newNote, './db/db.json');
     res.json(newNote);
 })
