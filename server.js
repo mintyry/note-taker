@@ -28,6 +28,10 @@ app.use(express.static('public'));
 
 //ROUTE HANDLERS
 //route handler for notes made bc index.js specifies this path; leads sends notes.html(page) to client
+app.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/notes.html'))
+})
+
 app.get('/api/notes', (req, res) => {
     const existingNotes = require('./db/db.json');
     res.json(existingNotes);

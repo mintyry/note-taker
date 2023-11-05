@@ -48,3 +48,34 @@ app.delete('/api/notes/:id', (req, res) => {
 //    console.log(updatedDb, 'updated db');
    res.json({ok:true});
 });
+
+//____
+
+app.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/notes.html'))
+})
+
+//router handler for api/notes specified in index.js; require/read file from db.json and simply send it back out and display to client
+app.get('/api/notes', (req, res) => {
+    readFromFile('./db/db.json')
+        .then((data) => {
+            res.json(JSON.parse(data))
+        });
+})
+
+//.post() allows us to create, in this case, creates new notes
+app.post('/api/notes', (req, res) => {
+    const newNote = {
+        title:req.body.title, 
+        text:req.body.text, 
+        id:uuid()
+    };
+    readAndAppend(newNote, './db/db.json');
+    res.json(newNote);
+})
+
+
+app.delete('/api/notes/:id', (req, res) => {
+    readAndRemove(req.params.id, './db/db.json');
+    res.json('note deleted!');
+});
