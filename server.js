@@ -14,6 +14,8 @@ const path = require('path');
 //requires uuid file to give each json object a uuid.
 const uuid = require('./helpers/uuid');
 
+const { readFromFile, readAndAppend, readAndRemove } = require('./helpers/fsUtils');
+
 
 //APP.USE
 //allows the middleware to know we're processing json and parses it into an array/object.
@@ -32,61 +34,46 @@ app.get('/notes', (req, res) => {
 
 //router handler for api/notes specified in index.js; require/read file from db.json and simply send it back out and display to client
 app.get('/api/notes', (req, res) => {
-    const existingNotes = require('./db/db.json');
-    res.json(existingNotes);
+    readFromFile('./db/db.json')
+        .then((data) => {
+            res.json(JSON.parse(data))
+        });
 })
 
 //.post() allows us to create, in this case, creates new notes
 app.post('/api/notes', (req, res) => {
-    // require db.json so we have the content
-    const existingNotes = require('./db/db.json');
-    // take what client sends to us, specifically what's in title and text
-    const { title, text } = req.body;
-
-    // If all the required properties are present
-    if (title && text) {
-        // Variable for the object we will save
-        const newNote = {
-            title,
-            text,
-            id: uuid(),
-        };
-        console.log(newNote);
-
-        existingNotes.push(newNote) //body is baked in; part of http requests; one of the properties of req for POST
-        console.log(existingNotes);
-        fs.writeFile('./db/db.json', JSON.stringify(existingNotes, null, 2), err => { //fs needs to take in string
-            if (err) {
-                console.log(err)
-            } else {
-                console.log('Note saved!');
-                res.status(201).end(); //similar to json, send, sendFile; let front end know you dont have to keep waiting
-                //route handlers always have to have response; knew to use end bc connection needs to end for functions to run
-            }
-        })
-    }
+    const newNote = {title:req.body.title, text:req.body.text, id:uuid()};
+    readAndAppend(newNote, './db/db.json');
+    res.json(newNote);
 })
 // originally used  ${id}; how come that doesnt work? **
-app.delete('/api/notes/:id', (req, res) => {
-    const existingNotes = require('./db/db.json');
-    // const existingNotes = fs.readFile('./db/db.json', (err, data) => {
-    //     if (err) {
-    //         console.error(err);
-    //         return;
-    //     }
-    //     console.log(data);
-    // });
-    const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id); // how does url even get the id to begin with?
-    fs.writeFile('./db/db.json', JSON.stringify(notesAfterDeletion, null, 2), (err) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('note deleted!');
-            res.end();
-        }
-    });
+// app.delete('/api/notes/:id', (req, res) => {
+//     const existingNotes = require('./db/db.json');
+//     // const existingNotes = fs.readFile('./db/db.json', (err, data) => {
+//     //     if (err) {
+//     //         console.error(err);
+//     //         return;
+//     //     }
+//     //     console.log(data);
+//     // });
+//     const notesAfterDeletion = existingNotes.filter((notes) => notes.id !== req.params.id); // how does url even get the id to begin with?
+//     fs.writeFile('./db/db.json', JSON.stringify(notesAfterDeletion, null, 2), (err) => {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             console.log('note deleted!');
+//             res.end();
+//         }
+//     });
 
-})
+// })
+
+app.delete('/api/notes/:id', (req, res) => {
+    readAndRemove(req.params.id, './db/db.json');
+    res.json('note deleted!');
+});
+
+
 
 //method covers get, post, update, delete, etc. using * wildcard is saying for any route that isnt any of the above (which is why it's all the way down here), send them back to the homepage.
 app.all('*', (req, res) => {
