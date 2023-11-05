@@ -1,6 +1,6 @@
 app.get('/api/notes', (req, res) => {
-   const existingNotes = require('./db/db.json');
-   res.json(existingNotes);
+    const existingNotes = require('./db/db.json');
+    res.json(existingNotes);
 })
 
 app.post('/api/notes', (req, res) => {

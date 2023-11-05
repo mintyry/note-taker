@@ -5,6 +5,7 @@ const util = require('util');
 
 // Promise version of fs.readFile
 const readFromFile = util.promisify(fs.readFile);
+//promise promises to give you the result when you need it
 
 //do we need this?
 /**
@@ -46,6 +47,7 @@ const readAndRemove = (content, file) => {
     }
   });
 };
+//race condition**
 
 
 module.exports = { readFromFile, writeToFile, readAndAppend, readAndRemove };
