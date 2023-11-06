@@ -1,5 +1,3 @@
-//**stringify err, throw err
-
 //VARIABLES
 //require the express module
 const express = require('express');
@@ -13,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 //requires uuid file to give each json object a uuid.
 const uuid = require('./helpers/uuid');
-
+//requires utils folder with proper functions for getting, posting, deleting api notes
 const { readFromFile, readAndAppend, readAndRemove } = require('./helpers/fsUtils');
 
 
@@ -32,7 +30,7 @@ app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'))
 })
 
-//router handler for api/notes specified in index.js; require/read file from db.json and simply send it back out and display to client
+//route handler for api/notes specified in index.js; promisified readFile allows complete reading of file before actions happen (sending back to client)
 app.get('/api/notes', (req, res) => {
     readFromFile('./db/db.json')
         .then((data) => {
@@ -42,21 +40,22 @@ app.get('/api/notes', (req, res) => {
 
 //.post() allows us to create, in this case, creates new notes
 app.post('/api/notes', (req, res) => {
+    // access title and text content from req.body, adds id to it.
+    const { title, text } = req.body;
     const newNote = {
-        title:req.body.title, 
-        text:req.body.text, 
-        id:uuid()
+        title,
+        text,
+        id: uuid()
     };
     readAndAppend(newNote, './db/db.json');
     res.json(newNote);
 })
 
-
+//route handler to delete notes
 app.delete('/api/notes/:id', (req, res) => {
     readAndRemove(req.params.id, './db/db.json');
     res.json('note deleted!');
 });
-
 
 
 //method covers get, post, update, delete, etc. using * wildcard is saying for any route that isnt any of the above (which is why it's all the way down here), send them back to the homepage.
@@ -64,5 +63,5 @@ app.all('*', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'))
 })
 
-
+// listens for events in the app and has the app run
 app.listen(PORT, () => console.log(`app running at http://localhost:${PORT}`))
