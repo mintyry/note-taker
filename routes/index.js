@@ -2,6 +2,7 @@
 const router = require('express').Router();
 const htmlRoutes = require('./htmlRoutes');
 const apiRoutes = require('./apiRoutes');
+//require path module from node, providing utilities for working with file and folder paths.
 const path = require('path');
 
 router.use('/', htmlRoutes);
