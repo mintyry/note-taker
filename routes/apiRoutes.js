@@ -7,6 +7,7 @@ const { readFromFile, readAndAppend, readAndRemove } = require('../helpers/fsUti
 
 //All routes are prepended with '/api/notes'
 
+//route handler for api/notes specified in index.js; promisified readFile allows complete reading of file before actions happen (sending back to client)
 router.get('/', (req, res) => {
     readFromFile('./db/db.json')
         .then((data) => {
